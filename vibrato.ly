@@ -1,5 +1,7 @@
 \version "2.22.1"
 
+#(use-modules (ice-9 match))
+
 #(set-object-property! 'curvature-factor 'backend-type? number?)
 
 vibrato =
