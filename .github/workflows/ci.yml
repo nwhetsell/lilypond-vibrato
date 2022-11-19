@@ -1,0 +1,28 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  Linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        lilypond-version: [2.23.81, 2.22.1]
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v3
+
+    - name: Install LilyPond
+      run: |
+        wget --no-verbose https://lilypond.org/download/binaries/linux-64/lilypond-${{ matrix.lilypond-version }}-1.linux-64.sh
+        sudo sh lilypond-${{ matrix.lilypond-version }}-1.linux-64.sh --batch
+
+    - name: Create PDFs
+      run: |
+        lilypond --output=test-${{ matrix.lilypond-version }} vibrato.ly
+
+    - name: Archive PDFs
+      uses: actions/upload-artifact@main
+      with:
+        name: ${{ runner.os }} artifacts
+        path: '*.pdf'
