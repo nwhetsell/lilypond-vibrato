@@ -15,7 +15,9 @@ vibrato =
            (lambda (grob original)
              (if
               (ly:stencil? original)
-              (match-let* (((left . right) (ly:grob-property grob 'normalized-endpoints))                             (left-idx (inexact->exact (round (* n-amplitudes-1 left))))                             (right-idx (inexact->exact (round (* n-amplitudes-1 right))))
+              (match-let* (((left . right) (ly:grob-property grob 'normalized-endpoints))
+                            (left-idx (inexact->exact (round (* n-amplitudes-1 left))))
+                            (right-idx (inexact->exact (round (* n-amplitudes-1 right))))
                             (sublist (match (drop (take amplitudes
                                                    (1+ right-idx))
                                              left-idx)
@@ -24,8 +26,8 @@ vibrato =
                             (original-ext (ly:stencil-extent original X))
                             (len (interval-length original-ext))
                             ((start . end) original-ext)
-                            (position-increment (/ len (1- (length sublist))))                             (thickness (* (ly:grob-property grob 'thickness 1.0)
-(ly:staff-symbol-line-thickness grob)))
+                            (position-increment (/ len (1- (length sublist))))
+                            (thickness (* (ly:grob-property grob 'thickness 1.0) (ly:staff-symbol-line-thickness grob)))
                             (factor (ly:grob-property grob 'curvature-factor)))
                 (make-path-stencil
                  (append
@@ -37,14 +39,18 @@ vibrato =
                              (acc '()))
                     (if (>= position end)
                         (reverse! acc)
-                        (match-let* ((next-position (+ position wave-length))                                      (intermediate1 (+ position (* wave-length factor)))                                      (intermediate2 (+ position (* wave-length (- 1 factor))))
+                        (match-let* ((next-position (+ position wave-length))
+                                     (intermediate1 (+ position (* wave-length factor)))
+                                     (intermediate2 (+ position (* wave-length (- 1 factor))))
                                      (from-last (- position last-exact))
-                                     ((previous-height next-height . _) tail)                                      (height (* current-sign (interval-index
-(cons previous-height next-height)
-                                                              (+ -1 (* 2 (/ from-last position-increment))))))                                      (path-component `(curveto ,intermediate1 ,height
-,intermediate2 ,height
-,next-position 0.0))
-                               (new-acc (append-reverse path-component acc)))
+                                     ((previous-height next-height . _) tail)
+                                     (height (* current-sign (interval-index
+                                                              (cons previous-height next-height)
+                                                              (+ -1 (* 2 (/ from-last position-increment))))))
+                                     (path-component `(curveto ,intermediate1 ,height
+                                                               ,intermediate2 ,height
+                                                               ,next-position 0.0))
+                                     (new-acc (append-reverse path-component acc)))
                           (if (>= from-last position-increment)
                               (loop next-position
                                     (cdr tail)
