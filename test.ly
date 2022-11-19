@@ -1,6 +1,6 @@
 \version "2.22.1"
 
-\include "vibrato.ly"
+\include "vibrato.ily"
 
 {
   \vibrato #'(0.5) #0.5
